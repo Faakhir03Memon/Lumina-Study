@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lumina_study/core/theme/app_theme.dart';
+import 'package:lumina_study/shared/services/auth_service.dart';
 import 'package:lumina_study/shared/services/storage_service.dart';
 import 'package:lumina_study/shared/widgets/lumina_widgets.dart';
 
@@ -15,11 +18,23 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _streak = 0;
   int _msgUsed = 0;
+  String _role = 'user';
 
   @override
   void initState() {
     super.initState();
     _loadStats();
+    _checkRole();
+  }
+
+  Future<void> _checkRole() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      if (doc.exists && mounted) {
+        setState(() => _role = doc.data()?['role'] ?? 'user');
+      }
+    }
   }
 
   void _loadStats() {
@@ -46,9 +61,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
           ],
         ),
         actions: [
+          if (_role == 'admin')
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings_rounded, color: AppColors.secondary),
+              onPressed: () => context.push('/admin'),
+              tooltip: 'Admin Panel',
+            ),
           IconButton(
             icon: const Icon(Icons.settings_rounded, color: AppColors.textSecondary),
             onPressed: () => context.push('/settings'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_rounded, color: AppColors.error),
+            onPressed: () async {
+              await AuthService().signOut();
+            },
+            tooltip: 'Sign Out',
           ),
         ],
       ),

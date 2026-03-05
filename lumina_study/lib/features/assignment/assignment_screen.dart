@@ -54,6 +54,10 @@ Long and detailed response required.''';
           _result = response;
           _isLoading = false;
         });
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await DatabaseService().logUsage(user.uid, 'Assignment Builder');
+        }
         await StorageService.updateStreak();
       }
     } catch (e) {

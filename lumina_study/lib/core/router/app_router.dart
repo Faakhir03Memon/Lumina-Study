@@ -12,6 +12,8 @@ import 'package:lumina_study/features/coding/coding_screen.dart';
 import 'package:lumina_study/features/dashboard/dashboard_screen.dart';
 import 'package:lumina_study/features/dashboard/settings_screen.dart';
 import 'package:lumina_study/features/assignment/assignment_screen.dart';
+import 'package:lumina_study/features/admin/admin_dashboard.dart';
+import 'package:lumina_study/features/admin/user_management_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 final appRouter = GoRouter(
@@ -110,6 +112,18 @@ final appRouter = GoRouter(
       path: '/settings',
       name: 'settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/admin',
+      name: 'admin',
+      builder: (context, state) => const AdminDashboard(),
+      routes: [
+        GoRoute(
+          path: 'users',
+          name: 'admin_users',
+          builder: (context, state) => const UserManagementScreen(),
+        ),
+      ],
     ),
   ],
 );

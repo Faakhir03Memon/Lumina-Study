@@ -88,6 +88,10 @@ class _CodingScreenState extends State<CodingScreen> {
           _result = response;
           _isLoading = false;
         });
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await DatabaseService().logUsage(user.uid, 'Coding Assistant');
+        }
         await StorageService.updateStreak();
       }
     } catch (e) {

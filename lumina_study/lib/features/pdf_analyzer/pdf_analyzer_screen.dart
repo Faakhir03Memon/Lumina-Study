@@ -114,6 +114,10 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
           _isLoading = false;
         });
         _tabController.animateTo(0);
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await DatabaseService().logUsage(user.uid, 'Notes Analyzer');
+        }
         await StorageService.updateStreak();
       }
     } catch (e) {

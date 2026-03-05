@@ -3,6 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lumina_study/core/theme/app_theme.dart';
 import 'package:lumina_study/shared/services/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,16 +16,22 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    _navigate();
+    _navigateToNext();
   }
 
-  Future<void> _navigate() async {
-    await Future.delayed(const Duration(milliseconds: 2800));
+  void _navigateToNext() async {
+    await Future.delayed(const Duration(milliseconds: 2500));
     if (!mounted) return;
-    if (StorageService.onboardingDone) {
+
+    final user = FirebaseAuth.instance.currentUser;
+    final hasFinishedOnboarding = StorageService.hasFinishedOnboarding;
+
+    if (user != null) {
       context.go('/dashboard');
-    } else {
+    } else if (!hasFinishedOnboarding) {
       context.go('/onboarding');
+    } else {
+      context.go('/login');
     }
   }
 

@@ -96,8 +96,17 @@ class _ChatScreenState extends State<ChatScreen> {
         final prompt = history.map((m) => '${m.role}: ${m.content}').join('\n');
         response = await ai.sendGeminiMessage(prompt: prompt);
       } else {
-        final model = _selectedModel == 'llama3fast' ? AiModel.llama3Fast : AiModel.llama3;
-        response = await ai.sendGroqMessage(messages: allMessages, model: model);
+        // final model = _selectedModel == 'llama3fast' ? AiModel.llama3Fast : AiModel.llama3; // No longer needed with smartChat
+        response = await ai.smartChat(
+          messages: allMessages, // Use allMessages including system prompt
+          model: _selectedModel,
+        );
+      }
+
+      // Log usage
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        await DatabaseService().logUsage(user.uid, 'AI Chat');
       }
 
       if (mounted) {
@@ -105,6 +114,7 @@ class _ChatScreenState extends State<ChatScreen> {
           _messages.add(_Message(role: 'assistant', content: response));
           _isLoading = false;
         });
+        await StorageService.updateStreak(); // Moved here
         _scrollToBottom();
       }
     } catch (e) {
