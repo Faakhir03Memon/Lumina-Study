@@ -65,9 +65,10 @@ class AiService {
     }
   }
 
-  // ── Gemini Chat ───────────────────────────────────────────────────────────
+  // ── Gemini Chat (Supports Multimodal) ──────────────────────────────────────
   Future<String> sendGeminiMessage({
     required String prompt,
+    String? base64Image,
     String model = ApiConstants.geminiModel,
     int maxTokens = ApiConstants.defaultMaxTokens,
   }) async {
@@ -75,25 +76,30 @@ class AiService {
       return '⚠️ Gemini API key not set. Please go to **Settings** and enter your free Gemini API key from [aistudio.google.com](https://aistudio.google.com).';
     }
 
-    final url =
-        '${ApiConstants.geminiBaseUrl}/models/$model:generateContent?key=$geminiApiKey';
+    final url = '${ApiConstants.geminiBaseUrl}/models/$model:generateContent?key=$geminiApiKey';
+
+    final Map<String, dynamic> requestBody = {
+      'contents': [
+        {
+          'parts': [
+            {'text': prompt},
+            if (base64Image != null)
+              {
+                'inline_data': {'mime_type': 'image/jpeg', 'data': base64Image}
+              },
+          ]
+        }
+      ],
+      'generationConfig': {
+        'maxOutputTokens': maxTokens,
+        'temperature': 0.7,
+      },
+    };
 
     final response = await http.post(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'contents': [
-          {
-            'parts': [
-              {'text': prompt}
-            ]
-          }
-        ],
-        'generationConfig': {
-          'maxOutputTokens': maxTokens,
-          'temperature': 0.7,
-        },
-      }),
+      body: jsonEncode(requestBody),
     );
 
     if (response.statusCode == 200) {

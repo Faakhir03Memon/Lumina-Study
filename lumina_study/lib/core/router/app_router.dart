@@ -9,6 +9,7 @@ import 'package:lumina_study/features/image_gen/image_gen_screen.dart';
 import 'package:lumina_study/features/coding/coding_screen.dart';
 import 'package:lumina_study/features/dashboard/dashboard_screen.dart';
 import 'package:lumina_study/features/dashboard/settings_screen.dart';
+import 'package:lumina_study/features/assignment/assignment_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/splash',
@@ -72,6 +73,11 @@ final appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    GoRoute(
+      path: '/assignment',
+      name: 'assignment',
+      builder: (context, state) => const AssignmentScreen(),
     ),
     GoRoute(
       path: '/coding',
