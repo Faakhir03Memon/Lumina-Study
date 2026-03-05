@@ -107,6 +107,10 @@ The "correct" field is the 0-based index of the correct option. Return ONLY raw 
           _quizFinished = false;
           _currentQ = 0;
         });
+        final user = FirebaseAuth.instance.currentUser;
+        if (user != null) {
+          await DatabaseService().logUsage(user.uid, 'Quiz Generator');
+        }
         await StorageService.updateStreak();
       }
     } catch (e) {

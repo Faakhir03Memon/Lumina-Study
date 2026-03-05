@@ -55,6 +55,10 @@ class _ImageGenScreenState extends State<ImageGenScreen> {
       _imageUrl = url;
       _isLoading = false;
     });
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DatabaseService().logUsage(user.uid, 'Image Generator');
+    }
     StorageService.updateStreak();
   }
 
