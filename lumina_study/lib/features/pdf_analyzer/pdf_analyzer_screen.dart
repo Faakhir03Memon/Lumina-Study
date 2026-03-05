@@ -6,6 +6,8 @@ import 'package:lumina_study/core/theme/app_theme.dart';
 import 'package:lumina_study/shared/services/ai_service.dart';
 import 'package:lumina_study/shared/services/storage_service.dart';
 import 'package:lumina_study/shared/widgets/lumina_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lumina_study/shared/services/database_service.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'dart:convert';

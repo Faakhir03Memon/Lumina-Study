@@ -23,6 +23,8 @@ class StorageService {
   static bool get onboardingDone =>
       _prefs?.getBool(AppStrings.onboardingDonePref) ?? false;
 
+  static bool get hasFinishedOnboarding => onboardingDone;
+
   static Future<void> setOnboardingDone() async =>
       await _prefs?.setBool(AppStrings.onboardingDonePref, true);
 

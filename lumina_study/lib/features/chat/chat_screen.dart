@@ -7,6 +7,8 @@ import 'package:lumina_study/core/theme/app_theme.dart';
 import 'package:lumina_study/shared/services/ai_service.dart';
 import 'package:lumina_study/shared/services/storage_service.dart';
 import 'package:lumina_study/shared/widgets/lumina_widgets.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lumina_study/shared/services/database_service.dart';
 
 class _Message {
   final String role;
@@ -99,7 +101,7 @@ class _ChatScreenState extends State<ChatScreen> {
         // final model = _selectedModel == 'llama3fast' ? AiModel.llama3Fast : AiModel.llama3; // No longer needed with smartChat
         response = await ai.smartChat(
           messages: allMessages, // Use allMessages including system prompt
-          model: _selectedModel,
+          taskType: 'chat',
         );
       }
 

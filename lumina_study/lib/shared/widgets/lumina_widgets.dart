@@ -80,6 +80,7 @@ class LuminaButton extends StatelessWidget {
 class LuminaCard extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;
+  final EdgeInsets? margin;
   final Color? color;
   final double borderRadius;
   final List<Color>? gradient;
@@ -88,6 +89,7 @@ class LuminaCard extends StatelessWidget {
     super.key,
     required this.child,
     this.padding,
+    this.margin,
     this.color,
     this.borderRadius = 16,
     this.gradient,
@@ -97,6 +99,7 @@ class LuminaCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding ?? const EdgeInsets.all(16),
+      margin: margin,
       decoration: BoxDecoration(
         gradient: gradient != null
             ? LinearGradient(
