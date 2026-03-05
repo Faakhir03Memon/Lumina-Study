@@ -8,6 +8,7 @@ import 'package:lumina_study/shared/services/storage_service.dart';
 import 'package:lumina_study/shared/widgets/lumina_widgets.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'dart:convert';
 
 class PdfAnalyzerScreen extends StatefulWidget {
   const PdfAnalyzerScreen({super.key});
@@ -20,6 +21,8 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
     with SingleTickerProviderStateMixin {
   String? _fileName;
   String? _pdfText;
+  String? _base64Image;
+  bool _isPdf = true;
   bool _isLoading = false;
   String _summary = '';
   String _keyPoints = '';
@@ -32,63 +35,73 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
     _tabController = TabController(length: 3, vsync: this);
   }
 
-  Future<void> _pickPdf() async {
+  Future<void> _pickFile() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf'],
+      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
     );
     if (result == null || result.files.isEmpty) return;
 
     final file = result.files.first;
+    final isPdf = file.extension?.toLowerCase() == 'pdf';
+
     setState(() {
       _fileName = file.name;
+      _isPdf = isPdf;
       _summary = '';
       _keyPoints = '';
       _questions = '';
       _pdfText = null;
+      _base64Image = null;
     });
 
-    // Extract text from PDF
     try {
-      final bytes = file.bytes ?? await File(file.path!).readAsBytes();
-      final doc = PdfDocument(inputBytes: bytes);
-      final extractor = PdfTextExtractor(doc);
-      final text = extractor.extractText();
-      doc.dispose();
-      setState(() => _pdfText = text);
+      if (isPdf) {
+        final bytes = file.bytes ?? await File(file.path!).readAsBytes();
+        final doc = PdfDocument(inputBytes: bytes);
+        final extractor = PdfTextExtractor(doc);
+        final text = extractor.extractText();
+        doc.dispose();
+        setState(() => _pdfText = text);
+      } else {
+        final bytes = file.bytes ?? await File(file.path!).readAsBytes();
+        setState(() => _base64Image = base64Encode(bytes));
+      }
     } catch (e) {
-      _showError('PDF text extraction failed: $e');
+      _showError('File processing failed: $e');
     }
   }
 
   Future<void> _analyze() async {
-    if (_pdfText == null || _pdfText!.isEmpty) {
-      _showError('Please pick a PDF first');
+    if ((_pdfText == null || _pdfText!.isEmpty) && _base64Image == null) {
+      _showError('Please pick a file first');
       return;
     }
 
     setState(() => _isLoading = true);
-
-    // Truncate to ~3000 chars to stay within token limits
-    final truncated = _pdfText!.length > 8000 ? _pdfText!.substring(0, 8000) : _pdfText!;
 
     final ai = AiService(
       groqApiKey: StorageService.groqApiKey,
       geminiApiKey: StorageService.geminiApiKey,
     );
 
+    final textSource = _isPdf ? 'text extracted from a PDF' : 'image of study notes';
+    final content = _isPdf ? _pdfText! : '';
+
     try {
-      // Run all 3 analyses - summary, key points, expected questions
       final summaryFuture = ai.sendGeminiMessage(
-        prompt: 'Analyze the following academic text and provide a concise summary in English and Urdu both:\n\n$truncated',
+        prompt: 'Analyze the following $textSource and provide a concise summary in English and Urdu both:\n\n$content',
+        base64Image: _base64Image,
         maxTokens: 600,
       );
       final keyPointsFuture = ai.sendGeminiMessage(
-        prompt: 'Extract 8–12 key points and important concepts from this text as a numbered markdown list:\n\n$truncated',
+        prompt: 'Extract 8–12 key points and important concepts from this $textSource as a numbered markdown list:\n\n$content',
+        base64Image: _base64Image,
         maxTokens: 600,
       );
       final questionsFuture = ai.sendGeminiMessage(
-        prompt: 'Generate 10 expected exam questions (mix of MCQ, short answer, and essay type) based on this text. Format as markdown:\n\n$truncated',
+        prompt: 'Generate 10 expected exam questions based on this $textSource. Format as markdown:\n\n$content',
+        base64Image: _base64Image,
         maxTokens: 800,
       );
 
@@ -125,9 +138,9 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
       backgroundColor: AppColors.bg,
       appBar: AppBar(
         backgroundColor: AppColors.bg,
-        title: const Text('PDF Analyzer'),
+        title: const Text('Notes Analyzer'),
         actions: [
-          if (_pdfText != null && !_isLoading)
+          if ((_pdfText != null || _base64Image != null) && !_isLoading)
             TextButton.icon(
               onPressed: _analyze,
               icon: const Icon(Icons.auto_awesome, size: 16, color: AppColors.pdfColor),
@@ -141,7 +154,7 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
           Padding(
             padding: const EdgeInsets.all(16),
             child: GestureDetector(
-              onTap: _pickPdf,
+              onTap: _pickFile,
               child: AnimatedContainer(
                 duration: 300.ms,
                 height: 130,
@@ -159,19 +172,26 @@ class _PdfAnalyzerScreenState extends State<PdfAnalyzerScreen>
                       ? Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.picture_as_pdf_rounded, color: AppColors.pdfColor, size: 36),
-                            const SizedBox(height: 10),
-                            const Text('Tap to upload PDF', style: TextStyle(color: AppColors.textPrimary, fontSize: 15, fontWeight: FontWeight.w500)),
+                            const Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.picture_as_pdf_rounded, color: AppColors.pdfColor, size: 28),
+                                SizedBox(width: 8),
+                                Icon(Icons.add_a_photo_rounded, color: AppColors.pdfColor, size: 28),
+                              ],
+                            ),
+                            const SizedBox(height: 12),
+                            const Text('Upload PDF or Photo of Notes', style: TextStyle(color: AppColors.textPrimary, fontSize: 14, fontWeight: FontWeight.w500)),
                             const SizedBox(height: 4),
-                            const Text('Notes, books, past papers', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                            const Text('AI will read and summarize them', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
                           ],
                         )
                       : Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 32),
+                            Icon(_isPdf ? Icons.picture_as_pdf_rounded : Icons.camera_alt_rounded, color: AppColors.success, size: 32),
                             const SizedBox(height: 8),
-                            Text(_fileName!, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600)),
+                            Text(_fileName!, style: const TextStyle(color: AppColors.textPrimary, fontWeight: FontWeight.w600, fontSize: 13)),
                             const SizedBox(height: 4),
                             const Text('Tap to change file', style: TextStyle(color: AppColors.textMuted, fontSize: 11)),
                           ],
