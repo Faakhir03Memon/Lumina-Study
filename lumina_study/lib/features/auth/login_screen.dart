@@ -207,7 +207,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         : Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Image.network('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png', width: 22, color: Colors.white),
+                              // Improved GitHub icon with fallback
+                              Image.network(
+                                'https://raw.githubusercontent.com/gauravghongde/social-icons/master/PNG/White/Github.png', 
+                                width: 22,
+                                errorBuilder: (context, error, stackTrace) => const Icon(Icons.code, color: Colors.white, size: 20),
+                              ),
                               const SizedBox(width: 12),
                               const Text('Continue with GitHub', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white)),
                             ],
