@@ -80,7 +80,7 @@ class AuthService {
   Future<UserCredential?> signInWithGitHub() async {
     try {
       final GithubAuthProvider githubProvider = GithubAuthProvider();
-      final UserCredential userCredential = await _auth.signInWithProvider(githubProvider);
+      final UserCredential userCredential = await _auth.signInWithPopup(githubProvider);
 
       if (userCredential.additionalUserInfo?.isNewUser == true) {
         await DatabaseService().createUser(
