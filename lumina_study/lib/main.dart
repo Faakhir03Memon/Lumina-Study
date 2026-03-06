@@ -4,15 +4,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:lumina_study/core/router/app_router.dart';
 import 'package:lumina_study/core/theme/app_theme.dart';
 import 'package:lumina_study/shared/services/storage_service.dart';
-// import 'package:lumina_study/firebase_options.dart'; // Uncomment after generating
+import 'package:lumina_study/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Firebase (Requires firebase_options.dart)
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // For now, initializing without options works on some platforms if config is already in native folders
-  await Firebase.initializeApp();
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   // Initialize storage
   await StorageService.init();
