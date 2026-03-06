@@ -50,16 +50,13 @@ class AuthService {
   // Sign In with Google
   Future<UserCredential?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) return null;
-
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      final userCredential = await _auth.signInWithCredential(credential);
+      // For Web, signInWithPopup is much more reliable and doesn't require ClientID configuration
+      // for the google_sign_in package. 
+      final GoogleAuthProvider googleProvider = GoogleAuthProvider();
+      
+      // If you still want to use google_sign_in package for mobile, you can use kIsWeb check
+      // but signInWithPopup is generally great for Firebase projects.
+      final userCredential = await _auth.signInWithPopup(googleProvider);
 
       if (userCredential.additionalUserInfo?.isNewUser == true) {
         await DatabaseService().createUser(
