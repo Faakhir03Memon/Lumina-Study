@@ -25,15 +25,9 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -47,29 +41,51 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR-API-KEY-HERE',
-    appId: 'YOUR-APP-ID-HERE',
-    messagingSenderId: 'YOUR-SENDER-ID-HERE',
-    projectId: 'lumina-study',
-    authDomain: 'lumina-study.firebaseapp.com',
-    storageBucket: 'lumina-study.appspot.com',
-    measurementId: 'YOUR-MEASUREMENT-ID-HERE',
+    apiKey: 'AIzaSyCQyQ2mcoEe6a70yDA3e9_eKMfmbvCRNKY',
+    appId: '1:44353113298:web:dc7bee0501c258c1cff10b',
+    messagingSenderId: '44353113298',
+    projectId: 'lumina-study-8c64c',
+    authDomain: 'lumina-study-8c64c.firebaseapp.com',
+    storageBucket: 'lumina-study-8c64c.firebasestorage.app',
+    measurementId: 'G-J4TCVJ0WG1',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR-API-KEY-HERE',
-    appId: 'YOUR-APP-ID-HERE',
-    messagingSenderId: 'YOUR-SENDER-ID-HERE',
-    projectId: 'lumina-study',
-    storageBucket: 'lumina-study.appspot.com',
+    apiKey: 'AIzaSyAq_Af5shtpWNibacJ3pZqRDGUMvTN5n8Y',
+    appId: '1:44353113298:android:cb55526a41e6c1dbcff10b',
+    messagingSenderId: '44353113298',
+    projectId: 'lumina-study-8c64c',
+    storageBucket: 'lumina-study-8c64c.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'YOUR-API-KEY-HERE',
-    appId: 'YOUR-APP-ID-HERE',
-    messagingSenderId: 'YOUR-SENDER-ID-HERE',
-    projectId: 'lumina-study',
-    storageBucket: 'lumina-study.appspot.com',
+    apiKey: 'AIzaSyByY7vblH6vV5mqlg5zZ52p8MUfOAZYF7s',
+    appId: '1:44353113298:ios:e98cee8b6aba0061cff10b',
+    messagingSenderId: '44353113298',
+    projectId: 'lumina-study-8c64c',
+    storageBucket: 'lumina-study-8c64c.firebasestorage.app',
+    iosClientId: '44353113298-h1ttgslr088ppf7698ud253u2jgbephd.apps.googleusercontent.com',
     iosBundleId: 'com.example.luminaStudy',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyByY7vblH6vV5mqlg5zZ52p8MUfOAZYF7s',
+    appId: '1:44353113298:ios:e98cee8b6aba0061cff10b',
+    messagingSenderId: '44353113298',
+    projectId: 'lumina-study-8c64c',
+    storageBucket: 'lumina-study-8c64c.firebasestorage.app',
+    iosClientId: '44353113298-h1ttgslr088ppf7698ud253u2jgbephd.apps.googleusercontent.com',
+    iosBundleId: 'com.example.luminaStudy',
+  );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyCQyQ2mcoEe6a70yDA3e9_eKMfmbvCRNKY',
+    appId: '1:44353113298:web:9182ea96873b7320cff10b',
+    messagingSenderId: '44353113298',
+    projectId: 'lumina-study-8c64c',
+    authDomain: 'lumina-study-8c64c.firebaseapp.com',
+    storageBucket: 'lumina-study-8c64c.firebasestorage.app',
+    measurementId: 'G-DMFT4N2N4S',
+  );
+
 }

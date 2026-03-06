@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "44353113298",
+    "project_id": "lumina-study-8c64c",
+    "storage_bucket": "lumina-study-8c64c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:44353113298:android:cb55526a41e6c1dbcff10b",
+        "android_client_info": {
+          "package_name": "com.example.lumina_study"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "44353113298-ede8l3tuoth21it1dt8fd9v2ln5eepqs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAq_Af5shtpWNibacJ3pZqRDGUMvTN5n8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "44353113298-ede8l3tuoth21it1dt8fd9v2ln5eepqs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
