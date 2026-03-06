@@ -17,6 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _isGoogleLoading = false;
+  bool _isGithubLoading = false;
 
   Future<void> _login() async {
     final email = _emailController.text.trim();
@@ -50,6 +51,21 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } finally {
       if (mounted) setState(() => _isGoogleLoading = false);
+    }
+  }
+
+  Future<void> _loginWithGitHub() async {
+    setState(() => _isGithubLoading = true);
+    try {
+      await AuthService().signInWithGitHub();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('❌ GitHub Sign-In failed: $e'), backgroundColor: AppColors.error),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isGithubLoading = false);
     }
   }
 
@@ -167,6 +183,33 @@ class _LoginScreenState extends State<LoginScreen> {
                               Image.network('https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1200px-Google_%22G%22_logo.svg.png', width: 18),
                               const SizedBox(width: 12),
                               const Text('Continue with Google', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white)),
+                            ],
+                          ),
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 12),
+
+              // GitHub Login Button
+              GestureDetector(
+                onTap: _isGithubLoading ? null : _loginWithGitHub,
+                child: Container(
+                  height: 54,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.05),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: AppColors.bgBorder),
+                  ),
+                  child: Center(
+                    child: _isGithubLoading
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.network('https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png', width: 22, color: Colors.white),
+                              const SizedBox(width: 12),
+                              const Text('Continue with GitHub', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: Colors.white)),
                             ],
                           ),
                   ),

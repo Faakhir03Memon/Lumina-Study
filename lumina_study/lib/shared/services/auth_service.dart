@@ -76,6 +76,27 @@ class AuthService {
     }
   }
 
+  // Sign In with GitHub
+  Future<UserCredential?> signInWithGitHub() async {
+    try {
+      final GithubAuthProvider githubProvider = GithubAuthProvider();
+      final UserCredential userCredential = await _auth.signInWithProvider(githubProvider);
+
+      if (userCredential.additionalUserInfo?.isNewUser == true) {
+        await DatabaseService().createUser(
+          uid: userCredential.user!.uid,
+          email: userCredential.user!.email ?? '',
+          name: userCredential.user!.displayName ?? 'Dev Student',
+          photoUrl: userCredential.user!.photoURL,
+        );
+      }
+
+      return userCredential;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   // Sign Out
   Future<void> signOut() async {
     await _googleSignIn.signOut();
